@@ -1,9 +1,9 @@
 # pistream
 Video stream and surveillance application using a Raspberry Pi 4
 
-Pistream
-Bill Pepper | Eunice Kang | Taehoon Kim
-IST 360 | 201910
+Pistream<br>
+Bill Pepper | Eunice Kang | Taehoon Kim<br>
+IST 360 | Fall 2019<br>
 
 <h1>Introduction</h1>
 Problem description, solution description, what will be provided - deliverables
