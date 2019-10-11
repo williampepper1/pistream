@@ -44,6 +44,8 @@ Functional & non-functional requirements
 <li>https://readwrite.com/2014/06/27/raspberry-pi-web-server-website-hosting/</li>
 <li>https://www.instructables.com/id/Raspberry-Pi-Smart-Phone-Connected-Door-Lock/</li>
 <li>https://www.hackster.io/paulfp/the-ultimate-raspberry-pi-smart-home-door-lock-3c55a0</li>
+<li>https://blog.miguelgrinberg.com/post/video-streaming-with-flask</li>
+<li>https://blog.miguelgrinberg.com/post/flask-video-streaming-revisited</li>
 </ul>
 
 <h1>Architecture</h1>
