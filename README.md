@@ -19,6 +19,7 @@ Functional & non-functional requirements
 <li>Photo</li>
 <li>Video</li>
 <li>Press a button to activate an actuator (i.e. Door lock!)</li>
+<li>Turn motion detection on only when there are no viewers</li>
 </ul>
 
 <h1>Software/Hardware components</h1>
