@@ -59,3 +59,9 @@ Functional & non-functional requirements
 <hr>
 <h1>How to run the Flask application</h1>
 <p>The flask application is roughly based on <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world">this tutorial</a></p>
+<p>Once you have cloned the GitHub repository, please follow these steps to run the application:</p>
+<ol>
+<li>Navigate to the code directory
+<li>Enter "flask run"
+<li>Open a web browser, enter http://127.0.0.1:5000/ into the address bar, and go!
+</ol>
