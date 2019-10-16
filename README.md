@@ -28,9 +28,11 @@ Functional & non-functional requirements
 <li>Raspberry Pi Camera Module V2</li>
 <li>Raspbian Operating System</li>
 <li>Possible tools?</li>
-<li>Motion JPEG MJPEG server</li>
-<li>Flask web framework</li>
-<li>Gunicorn web server</li>
+    <ul>
+    <li>Motion JPEG MJPEG server</li>
+    <li>Flask web framework</li>
+    <li>Gunicorn web server</li>
+    </ul>
 </ul>
 
 <h1>Related work (similar solutions, apps/services)</h1>
@@ -53,3 +55,7 @@ Functional & non-functional requirements
 <h1>Description of what each team member worked on</h1>
 <h1>Conclusion – limitations and future work</h1>
 <h1>References</h1>
+
+<hr>
+<h1>How to run the Flask application</h1>
+<p>The flask application is roughly based on <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world">this tutorial</a></p>
