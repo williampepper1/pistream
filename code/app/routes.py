@@ -7,6 +7,10 @@ from camera import Camera
 def index():
     return render_template('index.html')
 
+@app.route('/video_page')
+def video_page():
+    return render_template('video_page.html')
+
 def gen(camera):
     while True:
         frame = camera.get_frame()
