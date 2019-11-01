@@ -1,6 +1,7 @@
 from app import app
 from flask import render_template, Response
 from camera import Camera
+from send_pic import attach_pic
 
 @app.route('/')
 @app.route('/index')
@@ -21,6 +22,11 @@ def gen(camera):
 def video_feed():
     return Response(gen(Camera()),
            mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/send_file')
+def send_file():
+    attach_pic('1.jpg')
+    return render_template('video_page.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, threaded=True)
