@@ -1,7 +1,7 @@
 from flask import render_template
 from app import app
 from flask import render_template, Response
-from camera import Camera
+from camera_pi import Camera
 
 @app.route('/')
 @app.route('/index')
