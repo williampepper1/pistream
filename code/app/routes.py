@@ -1,7 +1,38 @@
-from flask import render_template
+from flask import Flask, render_template, request, Response
 from app import app
-from flask import render_template, Response
 from camera_pi import Camera
+import RPi.GPIO as GPIO
+
+## SET UP
+#define sensors GPIOs
+button = 0
+motion_detector = 0
+
+#define actuators GPIOs
+ledRed = 0
+ledGreen = 0
+ledYellow = 0
+
+#initialize GPIO status
+buttonSts = 0
+motion_detectorSts = 0
+ledRedSts = 0
+ledGreenSts = 0
+ledYellow = 0
+
+#Define button and sensor pins as input
+GPIO.setup(button, GPIO.IN)
+GPIO.setup(motion_detector, GPIO.IN)
+
+#define led pins as output
+GPIO.setup(ledRed, GPIO.OUT)
+GPIO.setup(ledYellow, GPIO.OUT)
+GPIO.setup(ledGreen, GPIO.OUT)
+
+#turn leds OFF
+GPIO.output(ledRed, GPIO.LOW)
+GPIO.output(ledYellow, GPIO.LOW)
+GPIO.output(ledGreen, GPIO.LOW)
 
 @app.route('/')
 @app.route('/index')
