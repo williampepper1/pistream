@@ -6,7 +6,12 @@
 
   <body>
     <!-- NAV BAR -->
-    <div><a href="{{ url_for('index') }}">Home</a></div>
+    <div><a href="{{ url_for('login') }}">Home</a></div>
+    {% if current_user.is_anonymous %}
+        <!-- <a href="{{ url_for('login') }}">Login</a> -->
+    {% else %}
+        <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
 
     <!-- FLASH MESSAGES -->
     {% with messages = get_flashed_messages() %}
