@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from app import app, db
-#from camera_pi import Camera
-from camera import Camera
-#import RPi.GPIO as GPIO
+from camera_pi import Camera
+#from camera import Camera
+import RPi.GPIO as GPIO
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User
 from app.forms import LoginForm, RegistrationForm, CreateUserForm
@@ -30,18 +30,18 @@ ledGreenSts = 0
 ledYellow = 0
 
 #Define button and sensor pins as input
-# GPIO.setup(button, GPIO.IN)
-# GPIO.setup(motion_detector, GPIO.IN)
+GPIO.setup(button, GPIO.IN)
+GPIO.setup(motion_detector, GPIO.IN)
 
-# #define led pins as output
-# GPIO.setup(ledRed, GPIO.OUT)
-# GPIO.setup(ledYellow, GPIO.OUT)
-# GPIO.setup(ledGreen, GPIO.OUT)
+#define led pins as output
+GPIO.setup(ledRed, GPIO.OUT)
+GPIO.setup(ledYellow, GPIO.OUT)
+GPIO.setup(ledGreen, GPIO.OUT)
 
-# #turn leds OFF
-# GPIO.output(ledRed, GPIO.LOW)
-# GPIO.output(ledYellow, GPIO.LOW)
-# GPIO.output(ledGreen, GPIO.LOW)
+#turn leds OFF
+GPIO.output(ledRed, GPIO.LOW)
+GPIO.output(ledYellow, GPIO.LOW)
+GPIO.output(ledGreen, GPIO.LOW)
 
 @app.route('/')
 def index():
