@@ -30,6 +30,7 @@ ledGrnSts = 0
 ledYlwSts = 0
 
 #Define button and sensor pins as input
+GPIO.setwarnings(False)
 GPIO.setup(button, GPIO.IN)
 GPIO.setup(motion_detector, GPIO.IN)
 
