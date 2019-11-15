@@ -19,8 +19,8 @@ motion_detector = 0
 
 #define actuators GPIOs
 ledRed = 0 #entrance denied
-ledGreen = 0 #entrance given
-ledYellow = 0 #camera recording ??
+ledGreen = 0 #entrance granted
+ledYellow = 0 #camera is recording & processing
 
 #initialize GPIO status
 buttonSts = 0
@@ -89,13 +89,13 @@ def video_feed():
 class MyModelView(sqla.ModelView):
 
     def is_accessible(self):
-        return login.current_user.is_authenticated
+        return current_user.is_authenticated
 
 class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/')
     def index(self):
-        if not login.current_user.is_authenticated:
+        if not current_user.is_authenticated:
             return redirect(url_for('.login_view'))
         return super(MyAdminIndexView, self).index()
 
@@ -105,9 +105,9 @@ class MyAdminIndexView(admin.AdminIndexView):
         form = LoginForm(request.form)
         if helpers.validate_form_on_submit(form):
             user = form.get_user()
-            login.login_user(user)
+            login_user(user)
 
-        if login.current_user.is_authenticated:
+        if current_user.is_authenticated:
             return redirect(url_for('.index'))
         link = '<p>Don\'t have an account? <a href="' + url_for('.register_view') + '">Click here to register.</a></p>'
         self._template_args['form'] = form
@@ -128,7 +128,7 @@ class MyAdminIndexView(admin.AdminIndexView):
             db.session.add(user)
             db.session.commit()
 
-            login.login_user(user)
+            login_user(user)
             return redirect(url_for('.index'))
         link = '<p>Already have an account? <a href="' + url_for('.login_view') + '">Click here to log in.</a></p>'
         self._template_args['form'] = form
@@ -137,7 +137,7 @@ class MyAdminIndexView(admin.AdminIndexView):
 
     @expose('/logout/')
     def logout_view(self):
-        login.logout_user()
+        logout_user()
         return redirect(url_for('.index'))
 
 class UserAdmin(sqla.ModelView):

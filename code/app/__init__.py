@@ -16,8 +16,8 @@ login = LoginManager(app)
 login.login_view = 'index'
 
 from app import routes, models
-from routes import MyAdminIndexView
-from models import User
+from app.routes import MyAdminIndexView
+from app.models import User
 
 admin = Admin(app, index_view=MyAdminIndexView(), template_mode='bootstrap3')
 admin.add_view(ModelView(models.User, db.session))
