@@ -5,7 +5,7 @@ from camera import Camera
 #import RPi.GPIO as GPIO
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, CreateUserForm
 
 import flask_admin as admin
 from flask_admin import helpers, expose
@@ -52,13 +52,10 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('video_feed'))
     form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
-            return redirect(url_for('index.html'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('video_feed'))
+    if helpers.validate_form_on_submit(form):
+        user = form.get_user()
+        login_user(user)
+        return redirect(url_for('video_page'))
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -140,8 +137,9 @@ class MyAdminIndexView(admin.AdminIndexView):
         logout_user()
         return redirect(url_for('.index'))
 
-class UserAdmin(sqla.ModelView):
-    form_columns = ['username', 'email']
+class UserAdminView(sqla.ModelView):
+    column_exclude_list = ['password_hash', ]
+    form = CreateUserForm
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, threaded=True)
