@@ -15,8 +15,9 @@ migrate = Migrate(app,db)
 login = LoginManager(app)
 login.login_view = 'index'
 
-admin = Admin(app, template_mode='bootstrap3')
-
 from app import routes, models
+from routes import MyAdminIndexView
+from models import User
 
+admin = Admin(app, index_view=MyAdminIndexView(), template_mode='bootstrap3')
 admin.add_view(ModelView(models.User, db.session))

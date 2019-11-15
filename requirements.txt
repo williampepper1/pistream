@@ -1,4 +1,4 @@
 flask-wtf
 flask-sqlalchemy
 flask-migrate
-flask_admin
+flask-admin

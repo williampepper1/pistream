@@ -17,9 +17,26 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+    def __unicode__(self):
+        return self.username
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
-class UserAdmin(sqla.ModelView):
-    form_columns = ['username', 'email']
