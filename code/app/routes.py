@@ -19,15 +19,15 @@ motion_detector = 0
 
 #define actuators GPIOs
 ledRed = 0 #entrance denied
-ledGreen = 0 #entrance granted
-ledYellow = 0 #camera is recording & processing
+ledGrn = 0 #entrance granted
+ledYlw = 0 #camera is recording & processing
 
 #initialize GPIO status
 buttonSts = 0
 motion_detectorSts = 0
 ledRedSts = 0
-ledGreenSts = 0
-ledYellow = 0
+ledGrnSts = 0
+ledYlwSts = 0
 
 #Define button and sensor pins as input
 GPIO.setup(button, GPIO.IN)
@@ -35,16 +35,22 @@ GPIO.setup(motion_detector, GPIO.IN)
 
 #define led pins as output
 GPIO.setup(ledRed, GPIO.OUT)
-GPIO.setup(ledYellow, GPIO.OUT)
-GPIO.setup(ledGreen, GPIO.OUT)
+GPIO.setup(ledYlw, GPIO.OUT)
+GPIO.setup(ledGrn, GPIO.OUT)
 
 #turn leds OFF
 GPIO.output(ledRed, GPIO.LOW)
-GPIO.output(ledYellow, GPIO.LOW)
-GPIO.output(ledGreen, GPIO.LOW)
+GPIO.output(ledYlw, GPIO.LOW)
+GPIO.output(ledGrn, GPIO.LOW)
 
 @app.route('/')
 def index():
+    #read sensor statuses
+    ledYlwSts = GPIO.input(ledYlw)
+
+    if ledYlwSts == 1:
+        GPIO.output(ledYlw, GPIO.LOW)
+
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -66,6 +72,35 @@ def logout():
 @app.route('/video_page')
 @login_required
 def video_page():
+    GPIO.output(ledYlw, GPIO.HIGH)
+    return render_template('video_page.html')
+
+@app.route('/grant')
+@login_required
+def grant():
+    GPIO.output(ledGrn, GPIO.HIGH)
+    GPIO.output(ledYlw, GPIO.LOW)
+
+    buttonSts = GPIO.input(button)
+    motion_detectorSts = GPIO.input(motion_detector)
+    ledRedSts = GPIO.input(ledRed)
+    ledYlwSts = GPIO.input(ledYlw)
+    ledGrnSts = GPIO.input(ledGrn)
+
+    return render_template('video_page.html')
+
+@app.route('/deny')
+@login_required
+def deny():
+    GPIO.output(ledRed, GPIO.HIGH)
+    GPIO.output(ledYlw, GPIO.LOW)
+
+    buttonSts = GPIO.input(button)
+    motion_detectorSts = GPIO.input(motion_detector)
+    ledRedSts = GPIO.input(ledRed)
+    ledYlwSts = GPIO.input(ledYlw)
+    ledGrnSts = GPIO.input(ledGrn)
+
     return render_template('video_page.html')
 
 def gen(camera):
