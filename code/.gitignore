@@ -1,6 +1,8 @@
 *.pyc
 __pycache__/
+__pycache__/*.pyc
 app/__pycache__/
+migrations/
 
 instance/
 
@@ -11,3 +13,5 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+*.db
