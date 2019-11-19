@@ -2,7 +2,7 @@
 Video stream and surveillance application using a Raspberry Pi 4
 
 Pistream<br>
-Bill Pepper | Eunice Kang | Taehoon Kim<br>
+Bill Pepper | Braden Tabisula | Eunice Kang | Taehoon Kim | Wenshi Lu<br>
 IST 360 | Fall 2019<br>
 
 <h1>Introduction</h1>
