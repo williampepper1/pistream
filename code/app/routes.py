@@ -1,8 +1,5 @@
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from app import app, db
-from camera_pi import Camera
-#from camera import Camera
-import RPi.GPIO as GPIO
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User
 from app.forms import LoginForm, RegistrationForm, CreateUserForm
@@ -12,7 +9,20 @@ from flask_admin import helpers, expose
 from flask_admin.contrib import sqla
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import sys
+import time
+import threading
+from app.email import sendEmail
+
+from camera_pi import Camera
+#from camera import Camera
+import RPi.GPIO as GPIO
+
 ## SET UP
+
+#pi camera
+cam = Camera()
+
 #define sensors GPIOs
 button = 0
 motion_detector = 0
@@ -44,6 +54,24 @@ GPIO.setup(ledGrn, GPIO.OUT)
 GPIO.output(ledRed, GPIO.LOW)
 GPIO.output(ledYlw, GPIO.LOW)
 GPIO.output(ledGrn, GPIO.LOW)
+
+email_update_interval = 600 #seconds
+last_epoch = 0
+
+def check_motion():
+    global last_epoch
+    while True:
+        try:
+            motion_detectorSts = GPIO.input(motion_detector)
+            if motion_detectorSts == 1 and (time.time() - last_epoch)>email_update_interval:
+                last_epoch = time.time()
+                pic = cam.get_frame()
+                # send email 
+                sendEmail(pic)
+        except:
+            pass # what should we do?
+
+### FLASK VIEWS
 
 @app.route('/')
 def index():
@@ -114,7 +142,7 @@ def gen(camera):
 @app.route('/video_feed')
 @login_required
 def video_feed():
-    return Response(gen(Camera()),
+    return Response(gen(cam),
            mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # ADMIN VIEWS
@@ -179,4 +207,7 @@ class UserAdminView(sqla.ModelView):
     form = CreateUserForm
 
 if __name__ == '__main__':
+    t = threading.Thread(target=check_motion, args=())
+    t.daemon = True
+    t.start()
     app.run(host='0.0.0.0', debug=True, threaded=True)
