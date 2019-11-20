@@ -5,10 +5,10 @@ from email.MIMEImage import MIMEImage
 from app.models import User
 
 # Email you want to send the update from (only works with gmail)
-fromEmail = 'email@gmail.com'
+fromEmail = 'superpi360@gmail.com'
 # You can generate an app password here to avoid storing your password in plain text
 # https://support.google.com/accounts/answer/185833?hl=en
-fromEmailPassword = 'password'
+fromEmailPassword = 'internetofthings'
 
 # Email you want to send the update to
 def getToEmails():

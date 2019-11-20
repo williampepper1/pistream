@@ -17,6 +17,7 @@ from app.email import sendEmail
 from camera_pi import Camera
 #from camera import Camera
 import RPi.GPIO as GPIO
+from RPLCD import CharLCD
 
 ## SET UP
 
@@ -31,6 +32,8 @@ motion_detector = 0
 ledRed = 0 #entrance denied
 ledGrn = 0 #entrance granted
 ledYlw = 0 #camera is recording & processing
+lcd = CharLCD(numbering_mode=GPIO.BOARD, cols=16, rows=2, pin_rs=37,
+              pin_e=35, pins_data=[33, 31, 29, 23])
 
 #initialize GPIO status
 buttonSts = 0
