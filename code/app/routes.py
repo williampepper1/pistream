@@ -21,19 +21,16 @@ from RPLCD import CharLCD
 
 ## SET UP
 
-#pi camera
-cam = Camera()
-
 #define sensors GPIOs
 button = 0
-motion_detector = 0
+motion_detector = 11
 
 #define actuators GPIOs
-ledRed = 0 #entrance denied
-ledGrn = 0 #entrance granted
-ledYlw = 0 #camera is recording & processing
-lcd = CharLCD(numbering_mode=GPIO.BOARD, cols=16, rows=2, pin_rs=37,
-              pin_e=35, pins_data=[33, 31, 29, 23])
+ledRed = 31 #entrance denied
+ledGrn = 33 #entrance granted
+ledYlw = 37 #camera is recording & processing
+# lcd = CharLCD(numbering_mode=GPIO.BOARD, cols=16, rows=2, pin_rs=37,
+#               pin_e=35, pins_data=[33, 31, 29, 23])
 
 #initialize GPIO status
 buttonSts = 0
@@ -45,7 +42,8 @@ ledYlwSts = 0
 #Define button and sensor pins as input
 GPIO.cleanup()
 GPIO.setwarnings(False)
-GPIO.setup(button, GPIO.IN)
+GPIO.setmode(GPIO.BOARD)
+# GPIO.setup(button, GPIO.IN)
 GPIO.setup(motion_detector, GPIO.IN)
 
 #define led pins as output
@@ -58,32 +56,29 @@ GPIO.output(ledRed, GPIO.LOW)
 GPIO.output(ledYlw, GPIO.LOW)
 GPIO.output(ledGrn, GPIO.LOW)
 
-email_update_interval = 600 #seconds
+email_update_interval = 180 #seconds
+cam = VideoCamera(flip=True)
+object_classifier = cv2.CascadeClassifier("models/fullbody_recognition_model.xml")
 last_epoch = 0
 
-def check_motion():
+def check_for_objects():
     global last_epoch
     while True:
         try:
-            motion_detectorSts = GPIO.input(motion_detector)
-            if motion_detectorSts == 1 and (time.time() - last_epoch)>email_update_interval:
+            frame, found_obj = cam.get_object(object_classifier)
+            if found_obj and (time.time() - last_epoch)>email_update_interval:
+                GPIO.output(ledYlw, GPIO.HIGH)
+                print("Motion Detected")
                 last_epoch = time.time()
-                pic = cam.get_frame()
                 # send email 
-                sendEmail(pic)
+                #sendEmail(frame)
         except:
-            pass # what should we do?
+            print("Email error")
 
 ### FLASK VIEWS
 
 @app.route('/')
 def index():
-    #read sensor statuses
-    ledYlwSts = GPIO.input(ledYlw)
-
-    if ledYlwSts == 1:
-        GPIO.output(ledYlw, GPIO.LOW)
-
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -105,7 +100,6 @@ def logout():
 @app.route('/video_page')
 @login_required
 def video_page():
-    GPIO.output(ledYlw, GPIO.HIGH)
     return render_template('video_page.html')
 
 @app.route('/grant')
@@ -113,12 +107,8 @@ def video_page():
 def grant():
     GPIO.output(ledGrn, GPIO.HIGH)
     GPIO.output(ledYlw, GPIO.LOW)
-
-    buttonSts = GPIO.input(button)
-    motion_detectorSts = GPIO.input(motion_detector)
-    ledRedSts = GPIO.input(ledRed)
-    ledYlwSts = GPIO.input(ledYlw)
-    ledGrnSts = GPIO.input(ledGrn)
+    time.sleep(5)
+    GPIO.output(ledGrn, GPIO.LOW)
 
     return render_template('video_page.html')
 
@@ -127,12 +117,8 @@ def grant():
 def deny():
     GPIO.output(ledRed, GPIO.HIGH)
     GPIO.output(ledYlw, GPIO.LOW)
-
-    buttonSts = GPIO.input(button)
-    motion_detectorSts = GPIO.input(motion_detector)
-    ledRedSts = GPIO.input(ledRed)
-    ledYlwSts = GPIO.input(ledYlw)
-    ledGrnSts = GPIO.input(ledGrn)
+    time.sleep(5)
+    GPIO.output(ledRed, GPIO.LOW)
 
     return render_template('video_page.html')
 
@@ -145,7 +131,7 @@ def gen(camera):
 @app.route('/video_feed')
 @login_required
 def video_feed():
-    return Response(gen(cam),
+    return Response(gen(Camera()),
            mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # ADMIN VIEWS
@@ -210,7 +196,8 @@ class UserAdminView(sqla.ModelView):
     form = CreateUserForm
 
 if __name__ == '__main__':
-    t = threading.Thread(target=check_motion, args=())
+    t = threading.Thread(target=check_for_objects, args=())
     t.daemon = True
     t.start()
-    app.run(host='0.0.0.0', debug=True, threaded=True)
+    #app.run(host='0.0.0.0', debug=True, threaded=True)
+    app.run(host='0.0.0.0', debug=True)
