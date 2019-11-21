@@ -2,12 +2,18 @@
 {% block content %}
 
 <body>
-  
+
   <h1>Video Streaming Demonstration</h1>
   <img src="{{ url_for('video_feed') }}">
   <div>
     <a href="grant" class="button">Grant</a>
     <a href="deny" class="button">Deny</a>
+<!-- took the following from here: https://www.quora.com/How-can-I-connect-a-button-created-in-HTML-with-a-function-created-in-Python-with-Flask 
+and https://www.w3schools.com/tags/tag_button.asp-->
+<!-- added slashes before grant and deny and changed from class to input -->
+    <br>
+    <a href=”/grant”></a><button type="button" onclick="alert('Access granted!')">Grant</button>
+    <a href=”/deny”></a><button type="button" onclick="alert('Access denied!')">Deny</button>
   </div>
 
 </body>
