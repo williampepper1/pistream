@@ -9,13 +9,15 @@ from flask_admin import helpers, expose
 from flask_admin.contrib import sqla
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import cv2
 import sys
 import time
 import threading
 from app.email import sendEmail
 
-from camera_pi import Camera
+#from camera_pi import Camera
 #from camera import Camera
+from cv_camera import VideoCamera
 import RPi.GPIO as GPIO
 from RPLCD import CharLCD
 
@@ -57,23 +59,23 @@ GPIO.output(ledYlw, GPIO.LOW)
 GPIO.output(ledGrn, GPIO.LOW)
 
 email_update_interval = 180 #seconds
-cam = VideoCamera(flip=True)
-object_classifier = cv2.CascadeClassifier("models/fullbody_recognition_model.xml")
+cam = VideoCamera(flip=False)
+object_classifier = cv2.CascadeClassifier("models/upperbody_recognition_model.xml")
 last_epoch = 0
 
 def check_for_objects():
     global last_epoch
     while True:
         try:
-            frame, found_obj = cam.get_object(object_classifier)
-            if found_obj and (time.time() - last_epoch)>email_update_interval:
+            frame, found_obj = video_camera.get_object(object_classifier)
+            if found_obj and (time.time() - last_epoch) > email_update_interval:
                 GPIO.output(ledYlw, GPIO.HIGH)
-                print("Motion Detected")
                 last_epoch = time.time()
-                # send email 
-                #sendEmail(frame)
+                print("Sending email...")
+                sendEmail(frame)
+                print("done!")
         except:
-            print("Email error")
+            print("Error sending email: ", sys.exc_info()[0])
 
 ### FLASK VIEWS
 
@@ -131,7 +133,7 @@ def gen(camera):
 @app.route('/video_feed')
 @login_required
 def video_feed():
-    return Response(gen(Camera()),
+    return Response(gen(cam),
            mimetype='multipart/x-mixed-replace; boundary=frame')
 
 # ADMIN VIEWS
@@ -200,4 +202,4 @@ if __name__ == '__main__':
     t.daemon = True
     t.start()
     #app.run(host='0.0.0.0', debug=True, threaded=True)
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False)
