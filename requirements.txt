@@ -5,3 +5,6 @@ flask-migrate
 flask-login
 flask-admin
 picamera
+RPi.GPIO
+RPLCD
+imutils
