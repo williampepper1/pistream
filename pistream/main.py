@@ -1,7 +1,7 @@
 import cv2
 import sys
 from mail import sendEmail
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, redirect, url_for
 from cv_camera import VideoCamera
 from flask_basicauth import BasicAuth
 import time
@@ -17,14 +17,14 @@ from RPLCD import CharLCD
 ## SET UP
 
 #define sensors GPIOs
-button = 0
-motion_detector = 11
+# button = 0
+# motion_detector = 11
 
 #define actuators GPIOs
-ledRed = 31 #entrance denied
-ledGrn = 33 #entrance granted
-ledYlw = 37 #camera is recording & processing
-lcd = CharLCD(numbering_mode=GPIO.BOARD, cols=16, rows=2, pin_rs=19, pin_e=16, pins_data=[21, 18, 23, 24])
+ledRed = 17 #entrance denied
+ledGrn = 27 #entrance granted
+ledYlw = 22 #camera is recording & processing
+lcd = CharLCD(numbering_mode=GPIO.BCM, cols=16, rows=2, pin_rs=26, pin_e=19, pins_data=[13, 6, 5, 11])
 
 #initialize GPIO status
 buttonSts = 0
@@ -36,9 +36,9 @@ ledYlwSts = 0
 #Define button and sensor pins as input
 GPIO.cleanup()
 GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 # GPIO.setup(button, GPIO.IN)
-GPIO.setup(motion_detector, GPIO.IN)
+#GPIO.setup(motion_detector, GPIO.IN)
 
 #define led pins as output
 GPIO.setup(ledRed, GPIO.OUT)
@@ -46,12 +46,12 @@ GPIO.setup(ledYlw, GPIO.OUT)
 GPIO.setup(ledGrn, GPIO.OUT)
 
 #defining lcd pins as output
+GPIO.setup(26, GPIO.OUT)
 GPIO.setup(19, GPIO.OUT)
-GPIO.setup(16, GPIO.OUT)
-GPIO.setup(21, GPIO.OUT)
-GPIO.setup(18, GPIO.OUT)
-GPIO.setup(23, GPIO.OUT)
-GPIO.setup(24, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT)
+GPIO.setup(6, GPIO.OUT)
+GPIO.setup(5, GPIO.OUT)
+GPIO.setup(11, GPIO.OUT)
 
 #turn leds OFF
 GPIO.output(ledRed, GPIO.LOW)
@@ -89,12 +89,12 @@ def check_for_objects():
                 except:
                     print("lcd error:", sys.exc_info())
                 sendEmail(frame)
-                time.sleep(2)
+                time.sleep(4)
                 lcd.clear()
                 print("done!")
                 lcd.cursor_pos=(0,0)
                 lcd.write_string("Email sent!")
-                time.sleep(2)
+                time.sleep(4)
                 lcd.clear()
         except:
             print("Error sending email: ", sys.exc_info()[0])
@@ -111,11 +111,10 @@ def grant():
     lcd.clear()
     lcd.cursor_pos=(0,0)
     lcd.write_string("Access granted!")
-    time.sleep(2)
+    time.sleep(4)
     lcd.clear()
     GPIO.output(ledGrn, GPIO.LOW)
-
-    return render_template('index.html')
+    return redirect(url_for('index'))
 
 @app.route('/deny')
 def deny():
@@ -124,11 +123,10 @@ def deny():
     lcd.clear()
     lcd.cursor_pos=(0,0)
     lcd.write_string("Access denied!")
-    time.sleep(2)
+    time.sleep(4)
     lcd.clear()
     GPIO.output(ledRed, GPIO.LOW)
-
-    return render_template('index.html')
+    return redirect(url_for('index'))
 
 def gen(camera):
     while True:

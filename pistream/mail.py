@@ -10,7 +10,9 @@ fromEmail = 'superpi360@gmail.com'
 fromEmailPassword = 'internetofthing!'
 
 # Email you want to send the update to
-toEmail = ['th.kim9112@gmail.com', 'taehoon.kim@cgu.edu','william.pepper@cgu.edu']
+#toEmail = ['th.kim9112@gmail.com', 'taehoon.kim@cgu.edu','william.pepper@cgu.edu']
+toEmail = ['th.kim9112@gmail.com']
+
 
 def sendEmail(image):
     msgRoot = MIMEMultipart('related')
